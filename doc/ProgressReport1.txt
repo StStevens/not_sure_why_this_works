@@ -1,0 +1,14 @@
+Progress Report:
+Our team created our own project shell in c++.
+The CSP solver consists of backtrackingSolver.cpp/h which contains the logic for generating a constraint graph and executing a search.
+The solver makes use of sudokuBoardReader.cpp/h to read the input file and create a SudokuBoard object.
+The SudokuBoard object keeps track of p, q, N and the state of the board it also handles assignment validation.
+
+Our team deserves extra credit for implementing our own shell in c++ without making a direct copy of the given shell.
+
+Our team also deserves extra credit for creating a problem generator. See BoardGenerator.cpp/h for implementation and run genBuild to build the gen executable.
+It has NOT been integrated into our main executable because we were unclear on if it was a separate program or a part of the solver we were to write.
+
+Appendix:
+
+Our team created our own project shell in c++.
