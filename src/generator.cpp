@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     std::vector<std::string> params;
     std::ifstream ifp;
     std::ofstream ofp;
-    std::string line, token;
+    std::string token;
 
     ifp.open(argv[1]);
     if (!(ifp.is_open()))
@@ -21,10 +21,7 @@ int main(int argc, char *argv[])
         return 10;
     }
 
-    std::getline(ifp, line);
-    std::stringstream parse(line);
-
-    while (parse >> token)
+    while (ifp >> token)
         params.push_back(token);
     ifp.close();
 
