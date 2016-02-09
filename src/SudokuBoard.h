@@ -3,11 +3,14 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <utility>
 
 class BadFileException{};
 
 const std::string AllowedValues = "123456789ABCDEFGHIJKLMNOPQRSTUZ";
 typedef std::vector< std::vector<char> > Board;
+typedef std::set<std::pair<int, int>> KeySet
 
 class SudokuBoard
 {
@@ -37,9 +40,10 @@ class SudokuBoard
 
 	std::string displayBoard();
 	std::string boardAsString();
-    bool validAssignment(int rowNum, int colNum, char assignment);
+	bool validAssignment(int rowNum, int colNum, char assignment);
 	bool makeAssignment(int rownNum, int colNum, char assignment);
-    void clearAssignment(int rowNum, int colNum);
+	void clearAssignment(int rowNum, int colNum);
+	KeySet getBoxMembers(int rowNum, int colNum);
 };
 
 

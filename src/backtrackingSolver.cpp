@@ -81,6 +81,31 @@ bool backtrackingSolver::backTrackingSearch(int level)
     return false;
 }
 
+CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
+	Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
+        if(!(domainEntry == constraintGraph[entry].end())){
+        	Domain removed;
+                removed.insert(toRemove);
+                constraintGraph[entry].erase(domainEntry);
+                return CheckChange(entry, removed);
+       }
+}
+
+
+
+std::list<CheckChange> backtrackingSolver::forwardCheck(int row, int column, char assigned)
+{
+	std::list<CheckChange> toReturn;
+//	for(Key toCheck : board->getBoxMembers(row, column))
+/*	{
+		Domain::iterator domainEntry = constraintGraph[toCheck].find(assigned);
+		if(domainEntry != constraintGraph[toCheck].end()){
+			toReturn.push_back(removeFromDomain(row, column, assigned));
+		}
+	} */
+	return toReturn;
+}
+
 void backtrackingSolver::solve()
 {
     time(&startTime);
