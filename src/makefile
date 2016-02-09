@@ -2,7 +2,7 @@ CC = g++ -std=c++0x
 CFLAGS = -c
 SOURCES = main.cpp SudokuBoard.cpp BoardGenerator.cpp sudokuBoardReader.cpp backtrackingSolver.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
-EXECUTABLE = ~/171/bin/main
+EXECUTABLE = ../bin/main
 
 all: $(SOURCES) $(EXECUTABLE)
 
