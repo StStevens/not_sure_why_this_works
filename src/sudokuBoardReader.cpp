@@ -53,11 +53,15 @@ void sudokuBoardReader::parseHeader(std::string headerStr){
 
 void sudokuBoardReader::fillRow(int rowNum, std::string toParse) {
     std::vector<char> entries;
-	for(int i = 0; i < (toParse.length() );i = i+2){
+	for(int i = 0; i < (toParse.length() - 1); i = i+2)
+    {
 		entries.push_back(toParse[i]);
-	}
-        if (entries.size() != n)
-		std::cout << "Bad N \n";
- //               throw (InvalidRowEntry("Number of row entires != N"));
+    }
+
+    if (entries.size() != n)
+    {
+	    std::cout << "Bad N \n";
+//        throw (InvalidRowEntry("Number of row entires != N"));
+    }
         this->board.push_back(entries);
 }
