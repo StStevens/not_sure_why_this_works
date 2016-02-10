@@ -133,3 +133,26 @@ void SudokuBoard::clearAssignment(int rowNum, int colNum)
 {
     board[rowNum][colNum] = '0';
 }
+
+KeySet SudokuBoard::getBoxMembers(int rowNum, int colNum)
+{
+    int lowX, highX, lowY, highY;
+    KeySet boxKeys;
+
+    lowX = rowNum - (rowNum % q);
+    highX = rowNum + (q - (rowNum % q));
+    lowY = colNum - (colNum % p);
+    highY = colNum + (p - (colNum % p));
+
+    for (int i = lowX; i < highX; i++)
+    {
+        for (int j = lowY; j < highY; j++)
+        {
+            std::pair<int, int> key(i, j);
+            boxKeys.insert(key);
+        }
+    }
+
+    return boxKeys;
+}
+

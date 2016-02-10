@@ -10,7 +10,7 @@ class BadFileException{};
 
 const std::string AllowedValues = "123456789ABCDEFGHIJKLMNOPQRSTUZ";
 typedef std::vector< std::vector<char> > Board;
-typedef std::set<std::pair<int, int>> KeySet
+typedef std::set<std::pair<int, int>> KeySet;
 
 class SudokuBoard
 {

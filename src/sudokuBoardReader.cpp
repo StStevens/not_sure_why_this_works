@@ -52,7 +52,7 @@ void sudokuBoardReader::parseHeader(std::string headerStr){
 }
 
 void sudokuBoardReader::fillRow(int rowNum, std::string toParse) {
-        std::vector<char> entries;
+    std::vector<char> entries;
 	for(int i = 0; i < (toParse.length() );i = i+2){
 		entries.push_back(toParse[i]);
 	}
