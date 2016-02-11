@@ -156,3 +156,28 @@ KeySet SudokuBoard::getBoxMembers(int rowNum, int colNum)
     return boxKeys;
 }
 
+KeySet SudokuBoard::getRowMembers(int rowNum)
+{
+	KeySet rowKeys;
+
+	for(int i = 0; i < this->N; i++)
+	{
+		std::pair<int, int> key(rowNum, i);
+		rowKeys.insert(key);
+	}
+
+	return rowKeys;
+}
+
+KeySet SudokuBoard::getColMembers(int colNum)
+{
+	KeySet colKeys;
+	for(int i = 0; i < this->N; i++)
+	{
+		std::pair<int, int> key(i, colNum);
+		colKeys.insert(key);
+	}
+
+	return colKeys;
+}
+

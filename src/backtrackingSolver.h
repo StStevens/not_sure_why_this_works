@@ -15,15 +15,13 @@
 typedef std::pair<int, int> Key;
 typedef std::set<char> Domain;
 typedef std::map<Key, Domain> ConstraintGraph;
-typedef std::pair< Key, std::set<char> > CheckChange;
+typedef std::pair< Key, char > CheckChange;
 
 class backtrackingSolver
 {
 	private:
 		SudokuBoard* board;
 		std::list<Key> toAssign;
-		void generateConstraintGraph();
-		Key selectUnassignedVariable();
 	        int timeout;
 		time_t startTime;
 		time_t prepStartTime;
@@ -35,9 +33,15 @@ class backtrackingSolver
        		int deadEnds;
 	        int nodeCount;
 	        std::string endResult;
+
+		void generateConstraintGraph();
+		Key selectUnassignedVariable();
 		bool backTrackingSearch(int level);
 		CheckChange removeFromDomain(Key entry, char toRemove);
+		void replaceInDomain(std::list<CheckChange> toRestore);
 		std::list<CheckChange> forwardCheck(int row, int column, char assigned);
+		KeySet getRelatedEntries(int row, int column);
+		
 		
 	public:
 	        std::string generateOfp();

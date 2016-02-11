@@ -84,25 +84,55 @@ bool backtrackingSolver::backTrackingSearch(int level)
 CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
 	Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
         if(!(domainEntry == constraintGraph[entry].end())){
-        	Domain removed;
-                removed.insert(toRemove);
                 constraintGraph[entry].erase(domainEntry);
-                return CheckChange(entry, removed);
+                return CheckChange(entry, toRemove);
        }
 }
 
+KeySet backtrackingSolver::getRelatedEntries(int row, int column)
+{
+	KeySet relatedPairs = board->getBoxMembers(row, column);
+	KeySet rowMembers = board->getRowMembers(row);
+	KeySet colMembers = board->getColMembers(column);
+	for(KeySet::iterator keyPair = rowMembers.begin(); keyPair != rowMembers.end(); keyPair++)
+	{
+		relatedPairs.insert(*keyPair);
+	}
+	for(KeySet::iterator keyPair = colMembers.begin(); keyPair != colMembers.end(); keyPair++)
+	{
+		relatedPairs.insert(*keyPair);
+	}
+	KeySet::iterator removeSelf = relatedPairs.find(Key(row, column));
+	if(removeSelf != relatedPairs.end()) //If we forward check away the key it won't assign.
+	{
+		relatedPairs.erase(removeSelf);
+	}
 
+	return relatedPairs;
+}
+
+void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
+{
+	for(std::list<CheckChange>::iterator entry = toRestore.begin(); entry !=  toRestore.end(); entry++)
+	{
+		Key toFix = entry->first;
+		char toAdd = entry->second;
+		constraintGraph[toFix].insert(toAdd);
+	//	constraintGraph[entry->first].insert(entry->second);
+	}
+}
 
 std::list<CheckChange> backtrackingSolver::forwardCheck(int row, int column, char assigned)
 {
 	std::list<CheckChange> toReturn;
-//	for(Key toCheck : board->getBoxMembers(row, column))
-/*	{
-		Domain::iterator domainEntry = constraintGraph[toCheck].find(assigned);
-		if(domainEntry != constraintGraph[toCheck].end()){
-			toReturn.push_back(removeFromDomain(row, column, assigned));
+	KeySet potentialChanges = getRelatedEntries(row, column);
+	for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
+	{
+		Domain::iterator domainEntry = constraintGraph[*toCheck].find(assigned);
+		if(domainEntry != constraintGraph[*toCheck].end()){
+			toReturn.push_back(removeFromDomain(*toCheck, assigned));
 		}
-	} */
+	}
 	return toReturn;
 }
 
