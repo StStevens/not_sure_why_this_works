@@ -38,7 +38,7 @@ Board SudokuBoard::getBoard() { return board; }
 std::string SudokuBoard::displayBoard()
 {
 	std::stringstream toReturn;
-	toReturn << "  N: " << N << "\tP: " << p << "\tQ: " << q << std::endl;
+	toReturn << "  N: " << N << "   P: " << p << "   Q: " << q << std::endl;
 
 	for (int i = 0; i < N; i++)
 	{

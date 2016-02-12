@@ -29,12 +29,10 @@ int main(int argc, char *argv[])
     try
     {
         sudokuBoardReader sudRead(argv[1]);
-
         SudokuBoard newBoard = sudRead.getBoard();
-
         std::cout << newBoard.displayBoard() << '\n';
 
-        backtrackingSolver btSolver(&newBoard, std::atoi(argv[3]), true);
+        backtrackingSolver btSolver(&newBoard, std::atoi(argv[3]), FC, ACP, MAC, MRV, DH, LCV);
         btSolver.solve();
 
         std::cout << newBoard.displayBoard() << '\n';

@@ -23,17 +23,17 @@ class backtrackingSolver
 	private:
 		SudokuBoard* board;
 		std::list<Key> toAssign;
-	        int timeout;
+        int timeout;
 		time_t startTime;
 		time_t prepStartTime;
 		time_t endPrepTime;
 		time_t searchStartTime;
 		time_t endSearchTime;
 		time_t endTime;
-       		bool hasSolution;
-       		int deadEnds;
-	        int nodeCount;
-	        std::string endResult;
+       	bool hasSolution;
+       	int deadEnds;
+	    int nodeCount;
+	    std::string endResult;
 
 		//Config
 		bool forwardCheckingEnabled;
@@ -48,8 +48,8 @@ class backtrackingSolver
 		
 		
 	public:
-	        std::string generateOfp();
-		backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool fc);
+        std::string generateOfp();
+		backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool FC, bool ACP, bool MAC, bool MRV, bool DH, bool LCV);
 		ConstraintGraph constraintGraph;
 		void solve();
 };

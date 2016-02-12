@@ -2,8 +2,9 @@
 
 
 class TimeOutError{};
+class NoRemainingVals{};
 
-backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool fc = false)
+backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool FC, bool ACP, bool MAC, bool MRV, bool DH, bool LCV)
 {
     board = toSolve;
     generateConstraintGraph();
@@ -11,7 +12,7 @@ backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool f
     hasSolution = false;
     deadEnds = 0;
     nodeCount = 0;
-    forwardCheckingEnabled = fc;
+    forwardCheckingEnabled = FC;
 }
 
 void backtrackingSolver::generateConstraintGraph()
@@ -72,21 +73,28 @@ bool backtrackingSolver::backTrackingSearch(int level)
 
     for (Domain::iterator toUse = constraintGraph[newVar].begin(); toUse != constraintGraph[newVar].end(); toUse++)
     {
-        if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
+        try
         {
-            if(forwardCheckingEnabled)
+            if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
             {
-                forwardCheck(newVar.first, newVar.second, *toUse, fcPruned);
-            }
+                if(forwardCheckingEnabled)
+                    forwardCheck(newVar.first, newVar.second, *toUse, fcPruned);
 
-            if (backTrackingSearch(level+1)) return true;
-                board->clearAssignment(newVar.first, newVar.second);
+                if (backTrackingSearch(level+1)) return true;
+                    board->clearAssignment(newVar.first, newVar.second);
 
-            if(forwardCheckingEnabled)
-            {
-                replaceInDomain(fcPruned);
-                fcPruned.clear();
+                if(forwardCheckingEnabled)
+                {
+                    replaceInDomain(fcPruned);
+                    fcPruned.clear();
+                }
             }
+        }
+        catch (NoRemainingVals e)
+        {
+            replaceInDomain(fcPruned);
+            fcPruned.clear();
+            board->clearAssignment(newVar.first, newVar.second);
         }
     }
 
@@ -98,6 +106,7 @@ bool backtrackingSolver::backTrackingSearch(int level)
 CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
     Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
         if(!(domainEntry == constraintGraph[entry].end())){
+                if (constraintGraph[entry].empty()) throw (NoRemainingVals());
                 constraintGraph[entry].erase(domainEntry);
                 return CheckChange(entry, toRemove);
        }
