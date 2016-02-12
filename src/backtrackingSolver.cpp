@@ -103,26 +103,17 @@ CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
        }
 }
 
-KeySet backtrackingSolver::getRelatedEntries(int row, int column)
+void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs)
 {
-    KeySet relatedPairs = board->getBoxMembers(row, column);
-    KeySet rowMembers = board->getRowMembers(row);
-    KeySet colMembers = board->getColMembers(column);
-    for(KeySet::iterator keyPair = rowMembers.begin(); keyPair != rowMembers.end(); keyPair++)
-    {
-        relatedPairs.insert(*keyPair);
-    }
-    for(KeySet::iterator keyPair = colMembers.begin(); keyPair != colMembers.end(); keyPair++)
-    {
-        relatedPairs.insert(*keyPair);
-    }
+    board->getBoxMembers(row, column, relatedPairs);
+    board->getRowMembers(row, relatedPairs);
+    board->getColMembers(column, relatedPairs);
+
     KeySet::iterator removeSelf = relatedPairs.find(Key(row, column));
     if(removeSelf != relatedPairs.end()) //If we forward check away the key it won't assign.
     {
         relatedPairs.erase(removeSelf);
     }
-
-    return relatedPairs;
 }
 
 void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
@@ -138,7 +129,8 @@ void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
 
 void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList)
 {
-    KeySet potentialChanges = getRelatedEntries(row, column);
+    KeySet potentialChanges;
+    getRelatedEntries(row, column, potentialChanges);
     for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
     {
         Domain::iterator domainEntry = constraintGraph[*toCheck].find(assigned);
