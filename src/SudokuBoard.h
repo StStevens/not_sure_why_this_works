@@ -43,9 +43,9 @@ class SudokuBoard
 	bool validAssignment(int rowNum, int colNum, char assignment);
 	bool makeAssignment(int rownNum, int colNum, char assignment);
 	void clearAssignment(int rowNum, int colNum);
-	KeySet getBoxMembers(int rowNum, int colNum);
-	KeySet getRowMembers(int rowNum);
-	KeySet getColMembers(int colNum);
+	void getBoxMembers(int rowNum, int colNum, KeySet &boxKeys);
+	void getRowMembers(int rowNum, KeySet &rowKeys);
+	void getColMembers(int colNum, KeySet &colKeys);
 	
 };
 

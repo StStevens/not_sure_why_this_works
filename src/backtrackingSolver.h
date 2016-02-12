@@ -3,6 +3,7 @@
 
 #include <map>
 #include <set>
+#include <unordered_set>
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -13,7 +14,7 @@
 
 
 typedef std::pair<int, int> Key;
-typedef std::set<char> Domain;
+typedef std::unordered_set<char> Domain;
 typedef std::map<Key, Domain> ConstraintGraph;
 typedef std::pair< Key, char > CheckChange;
 
@@ -42,7 +43,7 @@ class backtrackingSolver
 		bool backTrackingSearch(int level);
 		CheckChange removeFromDomain(Key entry, char toRemove);
 		void replaceInDomain(std::list<CheckChange> toRestore);
-		void  forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList);
+		void forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList);
 		void getRelatedEntries(int row, int column, KeySet &relatedPairs);
 		
 		
