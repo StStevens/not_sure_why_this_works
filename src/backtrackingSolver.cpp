@@ -3,14 +3,15 @@
 
 class TimeOutError{};
 
-backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime)
+backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool fc = false)
 {
-	board = toSolve;
-	generateConstraintGraph();
+    board = toSolve;
+    generateConstraintGraph();
     timeout = maxTime;
     hasSolution = false;
     deadEnds = 0;
-    nodeCount = 0; 
+    nodeCount = 0;
+    forwardCheckingEnabled = fc;
 }
 
 void backtrackingSolver::generateConstraintGraph()
@@ -64,6 +65,8 @@ bool backtrackingSolver::backTrackingSearch(int level)
     if (toAssign.empty())
         return true;
 
+    std::list<CheckChange> fcPruned;
+
     Key newVar = selectUnassignedVariable();
     nodeCount++;
 
@@ -71,8 +74,16 @@ bool backtrackingSolver::backTrackingSearch(int level)
     {
         if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
         {
+	    if(forwardCheckingEnabled)
+	    {
+		fcPruned = forwardCheck(newVar.first, newVar.second, *toUse);
+	    }
             if (backTrackingSearch(level+1)) return true;
             board->clearAssignment(newVar.first, newVar.second);
+	    if(forwardCheckingEnabled)
+	    {
+		replaceInDomain(fcPruned);
+	    }
         }
     }
 

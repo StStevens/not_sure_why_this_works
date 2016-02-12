@@ -34,6 +34,9 @@ class backtrackingSolver
 	        int nodeCount;
 	        std::string endResult;
 
+		//Config
+		bool forwardCheckingEnabled;
+
 		void generateConstraintGraph();
 		Key selectUnassignedVariable();
 		bool backTrackingSearch(int level);
@@ -45,7 +48,7 @@ class backtrackingSolver
 		
 	public:
 	        std::string generateOfp();
-		backtrackingSolver(SudokuBoard* toSolve, int maxTime);
+		backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool fc);
 		ConstraintGraph constraintGraph;
 		void solve();
 };

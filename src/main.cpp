@@ -9,6 +9,8 @@
 
 int main(int argc, char *argv[])
 {
+    bool FC, ACP, MAC, MRV, DH, LCV = false;
+
     if (argc < 4)
     {
         std::cout << "Not enough arguments given\n";
@@ -23,7 +25,7 @@ int main(int argc, char *argv[])
 
         std::cout << newBoard.displayBoard() << '\n';
 
-        backtrackingSolver btSolver(&newBoard, std::atoi(argv[3]));
+        backtrackingSolver btSolver(&newBoard, std::atoi(argv[3]), true);
         btSolver.solve();
 
         std::cout << newBoard.displayBoard() << '\n';
