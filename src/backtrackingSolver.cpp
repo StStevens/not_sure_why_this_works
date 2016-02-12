@@ -72,18 +72,19 @@ bool backtrackingSolver::backTrackingSearch(int level)
 
     for (Domain::iterator toUse = constraintGraph[newVar].begin(); toUse != constraintGraph[newVar].end(); toUse++)
     {
-        if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
-        {
-	    if(forwardCheckingEnabled)
-	    {
-		fcPruned = forwardCheck(newVar.first, newVar.second, *toUse);
-	    }
-            if (backTrackingSearch(level+1)) return true;
-            board->clearAssignment(newVar.first, newVar.second);
-	    if(forwardCheckingEnabled)
-	    {
-		replaceInDomain(fcPruned);
-	    }
+            if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
+            {
+            if(forwardCheckingEnabled)
+            {
+            fcPruned = forwardCheck(newVar.first, newVar.second, *toUse);
+            }
+                if (backTrackingSearch(level+1)) return true;
+                    board->clearAssignment(newVar.first, newVar.second);
+            if(forwardCheckingEnabled)
+            {
+                replaceInDomain(fcPruned);
+                fcPruned.clear();
+            }
         }
     }
 
