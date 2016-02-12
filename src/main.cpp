@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <cstring>
 #include "SudokuBoard.h"
 #include "sudokuBoardReader.h"
 #include "BoardGenerator.h"
@@ -12,13 +13,15 @@ int main(int argc, char *argv[])
     bool FC, ACP, MAC, MRV, DH, LCV = false;    
     for (int i = 4; i < argc; i++)
     {
-        if (argv[i] == "FC") FC = true;
+        if (strcmp(argv[i], "FC") == 0) FC = true;
         if (argv[i] == "ACP") ACP = true;
         if (argv[i] == "MAC") MAC = true;
         if (argv[i] == "MRV") MRV = true;
         if (argv[i] == "DH") DH = true;
         if (argv[i] == "LCV") LCV = true;
     }
+
+    std::cout << FC << "\n\n";
 
     if (argc < 4)
     {
