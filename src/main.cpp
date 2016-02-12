@@ -14,14 +14,12 @@ int main(int argc, char *argv[])
     for (int i = 4; i < argc; i++)
     {
         if (strcmp(argv[i], "FC") == 0) FC = true;
-        if (argv[i] == "ACP") ACP = true;
-        if (argv[i] == "MAC") MAC = true;
-        if (argv[i] == "MRV") MRV = true;
-        if (argv[i] == "DH") DH = true;
-        if (argv[i] == "LCV") LCV = true;
+        if (strcmp(argv[i], "ACP") == 0) ACP = true;
+        if (strcmp(argv[i], "MAC") == 0) MAC = true;
+        if (strcmp(argv[i], "MRV") == 0) MRV = true;
+        if (strcmp(argv[i], "DH") == 0) DH = true;
+        if (strcmp(argv[i], "LCV") == 0) LCV = true;
     }
-
-    std::cout << FC << "\n\n";
 
     if (argc < 4)
     {
