@@ -42,7 +42,7 @@ class backtrackingSolver
 		bool backTrackingSearch(int level);
 		CheckChange removeFromDomain(Key entry, char toRemove);
 		void replaceInDomain(std::list<CheckChange> toRestore);
-		std::list<CheckChange> forwardCheck(int row, int column, char assigned);
+		void  forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList);
 		KeySet getRelatedEntries(int row, int column);
 		
 		

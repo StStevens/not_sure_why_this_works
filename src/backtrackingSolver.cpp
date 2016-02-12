@@ -16,21 +16,21 @@ backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool f
 
 void backtrackingSolver::generateConstraintGraph()
 {
-	for (int i = 0; i < board->getN(); i++)
-	{
-		for (int j = 0; j < board->getN(); j++)
-		{
-			if (board->getValue(i, j) == '0')
-			{
-				toAssign.push_back(Key(i,j)); //Should move this later
-				std::string domain = board->getDomain();
-				for(std::string::iterator toUse = domain.begin(); toUse != domain.end(); ++toUse)
-				{
-				    constraintGraph[Key(i, j)].insert(*toUse);
-				}
-			}
-		}
-	}
+    for (int i = 0; i < board->getN(); i++)
+    {
+        for (int j = 0; j < board->getN(); j++)
+        {
+            if (board->getValue(i, j) == '0')
+            {
+                toAssign.push_back(Key(i,j)); //Should move this later
+                std::string domain = board->getDomain();
+                for(std::string::iterator toUse = domain.begin(); toUse != domain.end(); ++toUse)
+                {
+                    constraintGraph[Key(i, j)].insert(*toUse);
+                }
+            }
+        }
+    }
 }
    
 std::string backtrackingSolver::generateOfp()
@@ -54,7 +54,7 @@ Key backtrackingSolver::selectUnassignedVariable()
 {
     Key toReturn = toAssign.front();
     toAssign.pop_front();
-	return toReturn;
+    return toReturn;
 }
 
 bool backtrackingSolver::backTrackingSearch(int level)
@@ -72,14 +72,16 @@ bool backtrackingSolver::backTrackingSearch(int level)
 
     for (Domain::iterator toUse = constraintGraph[newVar].begin(); toUse != constraintGraph[newVar].end(); toUse++)
     {
-            if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
-            {
+        if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
+        {
             if(forwardCheckingEnabled)
             {
-            fcPruned = forwardCheck(newVar.first, newVar.second, *toUse);
+                forwardCheck(newVar.first, newVar.second, *toUse, fcPruned);
             }
-                if (backTrackingSearch(level+1)) return true;
-                    board->clearAssignment(newVar.first, newVar.second);
+
+            if (backTrackingSearch(level+1)) return true;
+                board->clearAssignment(newVar.first, newVar.second);
+
             if(forwardCheckingEnabled)
             {
                 replaceInDomain(fcPruned);
@@ -94,7 +96,7 @@ bool backtrackingSolver::backTrackingSearch(int level)
 }
 
 CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
-	Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
+    Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
         if(!(domainEntry == constraintGraph[entry].end())){
                 constraintGraph[entry].erase(domainEntry);
                 return CheckChange(entry, toRemove);
@@ -103,49 +105,47 @@ CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
 
 KeySet backtrackingSolver::getRelatedEntries(int row, int column)
 {
-	KeySet relatedPairs = board->getBoxMembers(row, column);
-	KeySet rowMembers = board->getRowMembers(row);
-	KeySet colMembers = board->getColMembers(column);
-	for(KeySet::iterator keyPair = rowMembers.begin(); keyPair != rowMembers.end(); keyPair++)
-	{
-		relatedPairs.insert(*keyPair);
-	}
-	for(KeySet::iterator keyPair = colMembers.begin(); keyPair != colMembers.end(); keyPair++)
-	{
-		relatedPairs.insert(*keyPair);
-	}
-	KeySet::iterator removeSelf = relatedPairs.find(Key(row, column));
-	if(removeSelf != relatedPairs.end()) //If we forward check away the key it won't assign.
-	{
-		relatedPairs.erase(removeSelf);
-	}
+    KeySet relatedPairs = board->getBoxMembers(row, column);
+    KeySet rowMembers = board->getRowMembers(row);
+    KeySet colMembers = board->getColMembers(column);
+    for(KeySet::iterator keyPair = rowMembers.begin(); keyPair != rowMembers.end(); keyPair++)
+    {
+        relatedPairs.insert(*keyPair);
+    }
+    for(KeySet::iterator keyPair = colMembers.begin(); keyPair != colMembers.end(); keyPair++)
+    {
+        relatedPairs.insert(*keyPair);
+    }
+    KeySet::iterator removeSelf = relatedPairs.find(Key(row, column));
+    if(removeSelf != relatedPairs.end()) //If we forward check away the key it won't assign.
+    {
+        relatedPairs.erase(removeSelf);
+    }
 
-	return relatedPairs;
+    return relatedPairs;
 }
 
 void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
 {
-	for(std::list<CheckChange>::iterator entry = toRestore.begin(); entry !=  toRestore.end(); entry++)
-	{
-		Key toFix = entry->first;
-		char toAdd = entry->second;
-		constraintGraph[toFix].insert(toAdd);
-	//	constraintGraph[entry->first].insert(entry->second);
-	}
+    for(std::list<CheckChange>::iterator entry = toRestore.begin(); entry !=  toRestore.end(); entry++)
+    {
+        Key toFix = entry->first;
+        char toAdd = entry->second;
+        constraintGraph[toFix].insert(toAdd);
+    //  constraintGraph[entry->first].insert(entry->second);
+    }
 }
 
-std::list<CheckChange> backtrackingSolver::forwardCheck(int row, int column, char assigned)
+void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList)
 {
-	std::list<CheckChange> toReturn;
-	KeySet potentialChanges = getRelatedEntries(row, column);
-	for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
-	{
-		Domain::iterator domainEntry = constraintGraph[*toCheck].find(assigned);
-		if(domainEntry != constraintGraph[*toCheck].end()){
-			toReturn.push_back(removeFromDomain(*toCheck, assigned));
-		}
-	}
-	return toReturn;
+    KeySet potentialChanges = getRelatedEntries(row, column);
+    for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
+    {
+        Domain::iterator domainEntry = constraintGraph[*toCheck].find(assigned);
+        if(domainEntry != constraintGraph[*toCheck].end()){
+            changeList.push_back(removeFromDomain(*toCheck, assigned));
+        }
+    }
 }
 
 void backtrackingSolver::solve()
