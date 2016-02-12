@@ -14,3 +14,5 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm *.o
+builder:
+	g++ -std=c++0x generator.cpp SudokuBoard.cpp BoardGenerator.cpp -o gen
