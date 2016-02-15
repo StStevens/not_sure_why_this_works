@@ -44,7 +44,7 @@ std::string backtrackingSolver::generateOfp()
     output << "SEARCH_DONE=" << endSearchTime << std::endl;
     output << "SOLUTION_TIME=" << ((endPrepTime - prepStartTime) + (endSearchTime - searchStartTime)) << std::endl;
     output << "STATUS=" << endResult << std::endl;
-    output << "SOLUTION=" << board->boardAsString() << std::endl;
+    output << "SOLUTION=" << board->boardAsString(hasSolution) << std::endl;
     output << "COUNT_NODES=" << nodeCount << std::endl;
     output << "COUNT_DEADENDS=" << deadEnds << std::endl;
     

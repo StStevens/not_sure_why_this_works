@@ -59,21 +59,35 @@ std::string SudokuBoard::displayBoard()
 	return toReturn.str();
 }
 
-std::string SudokuBoard::boardAsString()
+std::string SudokuBoard::boardAsString(bool hasSolution)
 {
     std::stringstream boardTuple;
     boardTuple << "(";
-    for (int i = 0; i < N; i++)
+    if (hasSolution)
     {
-        for (int j = 0; j < N; j++)
+        for (int i = 0; i < N; i++)
         {
-            if ((i * j) == ((N-1) * (N-1)))
-                boardTuple << board[i][j] << ")";
-            else
-                boardTuple << board[i][j] << ",";
+            for (int j = 0; j < N; j++)
+            {
+                if ((i * j) == ((N-1) * (N-1)))
+                    boardTuple << board[i][j] << ")";
+                else
+                    boardTuple << board[i][j] << ",";
+            }
+        } 
+    }
+    else if (!hasSolution)
+    {
+        for (int k = 0; k < N; k++)
+        {
+            for (int l = 0; l < N; l++)
+            {
+                if ((k * l) == (N-1) * (N-1))
+                    boardTuple << "0)";
+                else boardTuple << "0,";
+            }
         }
-    } 
-    
+    }
     return boardTuple.str();
 }
 

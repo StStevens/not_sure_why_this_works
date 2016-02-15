@@ -39,7 +39,7 @@ class SudokuBoard
 	char getValue(int p, int q) { return board[p][q]; }
 
 	std::string displayBoard();
-	std::string boardAsString();
+	std::string boardAsString(bool hasSolution);
 	bool validAssignment(int rowNum, int colNum, char assignment);
 	bool makeAssignment(int rownNum, int colNum, char assignment);
 	void clearAssignment(int rowNum, int colNum);
