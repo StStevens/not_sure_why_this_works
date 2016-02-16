@@ -13,6 +13,7 @@ backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool F
     deadEnds = 0;
     nodeCount = 0;
     forwardCheckingEnabled = FC;
+    minRemVar = MRV;
 }
 
 void backtrackingSolver::generateConstraintGraph()
@@ -53,8 +54,27 @@ std::string backtrackingSolver::generateOfp()
 
 Key backtrackingSolver::selectUnassignedVariable()
 {
-    Key toReturn = toAssign.front();
-    toAssign.pop_front();
+    Key toReturn;
+    if (this->minRemVar)
+    {
+        std::list<Key>::iterator toErase;
+        int min = 36;
+        for (std::list<Key>::iterator it = toAssign.begin(); it != toAssign.end(); it++)
+        {
+            if (this->constraintGraph[*it].size() < min)
+            {
+                min = this->constraintGraph[*it].size();
+                toReturn = *it;
+                toErase = it;
+            }
+        }
+        toAssign.erase(toErase);
+    }
+    else
+    {
+        toReturn = toAssign.front();
+        toAssign.pop_front();
+    }
     return toReturn;
 }
 

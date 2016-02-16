@@ -37,6 +37,7 @@ class backtrackingSolver
 
 		//Config
 		bool forwardCheckingEnabled;
+        bool minRemVar;
 
 		void generateConstraintGraph();
 		Key selectUnassignedVariable();
