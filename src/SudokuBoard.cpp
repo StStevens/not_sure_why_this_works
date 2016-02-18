@@ -161,8 +161,11 @@ void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys)
     {
         for (int j = lowY; j < highY; j++)
         {
-            std::pair<int, int> key(i, j);
-            boxKeys.insert(key);
+            if (board[i][j] == '0')
+            {
+                std::pair<int, int> key(i, j);
+                boxKeys.insert(key);
+            }
         }
     }
 }
@@ -171,8 +174,11 @@ void SudokuBoard::getRowMembers(int rowNum, KeySet &rowKeys)
 {
 	for(int i = 0; i < this->N; i++)
 	{
-		std::pair<int, int> key(rowNum, i);
-		rowKeys.insert(key);
+        if (board[rowNum][i] == '0')
+        {
+            std::pair<int, int> key(rowNum, i);
+            rowKeys.insert(key);
+        } 
 	}
 
 }
@@ -181,8 +187,11 @@ void SudokuBoard::getColMembers(int colNum, KeySet &colKeys)
 {
 	for(int i = 0; i < this->N; i++)
 	{
-		std::pair<int, int> key(i, colNum);
-		colKeys.insert(key);
+        if (board[i][colNum] == '0')
+        {
+            std::pair<int, int> key(i, colNum);
+            colKeys.insert(key);
+        }
 	}
 
 }

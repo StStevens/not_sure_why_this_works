@@ -24,7 +24,7 @@ void backtrackingSolver::generateConstraintGraph()
         {
             if (board->getValue(i, j) == '0')
             {
-                toAssign.push_back(Key(i,j)); //Should move this later
+                toAssign.push_back(Key(i,j)); // Should move this later
                 std::string domain = board->getDomain();
                 for(std::string::iterator toUse = domain.begin(); toUse != domain.end(); ++toUse)
                 {
@@ -172,8 +172,10 @@ void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::l
 void backtrackingSolver::solve()
 {
     time(&startTime);
+
     time(&prepStartTime);
     time(&endPrepTime);
+
     time(&searchStartTime);
         
     try
