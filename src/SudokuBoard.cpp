@@ -5,6 +5,16 @@
 
 class InvalidBoardError{};
 
+
+/**
+ * Constructor for SudokuBoard
+ *
+ * @param[in] int p The number of rows per box
+ * @param[in] int q The number of columns per box
+ * @param[in] int N The number of row and columns in the board
+ *
+ * @returns SudokuBoard
+ **/
 SudokuBoard::SudokuBoard(int p, int q, int N, Board newBoard)
 {
 	if (N != p * q || N < 1)
@@ -21,20 +31,24 @@ SudokuBoard::SudokuBoard(int p, int q, int N, Board newBoard)
 	}
 }
 
+//Setters
 void SudokuBoard::setP(int p) { this->p = p; }
 void SudokuBoard::setQ(int q) { this->q = q; }
 void SudokuBoard::setN(int N) { this->N = N; }
-void SudokuBoard::setBoard(Board newBoard)
-{
-	board = newBoard;
-}
-    
+void SudokuBoard::setBoard(Board newBoard){	board = newBoard; }
+
+//Getters
 int SudokuBoard::getP() { return p; }
 int SudokuBoard::getQ() { return q; }
 int SudokuBoard::getN() { return N; }
 std::string SudokuBoard::getDomain() { return validEntries; }
 Board SudokuBoard::getBoard() { return board; }
 
+/**
+ * Returns the board as a string.
+ *
+ * @returns String
+ **/
 std::string SudokuBoard::displayBoard()
 {
 	std::stringstream toReturn;
@@ -59,6 +73,14 @@ std::string SudokuBoard::displayBoard()
 	return toReturn.str();
 }
 
+/**
+ * Returns the board solution as a String.
+ * Solution is all zeros for no solution.
+ *
+ * @prama[in] bool hasSolution If the board has a solution.
+ * 
+ * @returns string The solution to the board as a string.
+ **/
 std::string SudokuBoard::boardAsString(bool hasSolution)
 {
     std::stringstream boardTuple;
@@ -90,7 +112,15 @@ std::string SudokuBoard::boardAsString(bool hasSolution)
     }
     return boardTuple.str();
 }
-
+/**
+ * Returns true if the character assignment
+ * is consistent for the row.
+ *
+ * @param[in] int rowNum        The row number to check.
+ * @param[in] char assignment   The character to try and assign.
+ *
+ * @returns bool True is the assignment is consistent.
+ **/
 bool SudokuBoard::validRow(int rowNum, char assignment)
 {
 	for (int i = 0; i < N; i++){
@@ -101,6 +131,15 @@ bool SudokuBoard::validRow(int rowNum, char assignment)
 	return true;
 }
 
+/**
+ * Returns true if the character assignment
+ * is consistent for the column.
+ *
+ * @param[in] int colNum        The column number to check.
+ * @param[in] char assignment   The character to try and assign.
+ *
+ * @returns bool True is the assignment is consistent.
+ **/
 bool SudokuBoard::validCol(int colNum, char assignment)
 {
 	for (int i = 0; i < N; i++){
@@ -111,6 +150,16 @@ bool SudokuBoard::validCol(int colNum, char assignment)
 	return true;
 }
 
+/**
+ * Returns true if the character assignment
+ * is consistent for the box.
+ *
+ * @param[in] int rowNum        The row number to check.
+ * @param[in] int colNum        The column number to check.
+ * @param[in] char assignment   The character to try and assign.
+ *
+ * @returns bool True is the assignment is consistent.
+ **/
 bool SudokuBoard::validBox(int rowNum, int colNum, char assignment)
 {
 	int rDiv = rowNum/p;
@@ -128,11 +177,31 @@ bool SudokuBoard::validBox(int rowNum, int colNum, char assignment)
 	return true;
 }
 
+/**
+ * Returns true if the character assignment
+ * is consistent for the board.
+ *
+ * @param[in] int rowNum        The box number to check.
+ * @param[in] int colNum        The column number to check.
+ * @param[in] char assignment   The character to try and assign.
+ *
+ * @returns bool True is the assignment is consistent.
+ **/
 bool SudokuBoard::validAssignment(int rowNum, int colNum, char assignment)
 {
 	return validCol(colNum, assignment) && validRow(rowNum, assignment) && validBox(rowNum, colNum, assignment);
 }
 
+/**
+ * Returns true if the character assignment
+ * is made.
+ *
+ * @param[in] int rowNum        The box number to check.
+ * @param[in] int colNum        The column number to check.
+ * @param[in] char assignment   The character to try and assign.
+ *
+ * @returns bool True is the assignment was made and  consistent.
+ **/
 bool SudokuBoard::makeAssignment(int rowNum, int colNum, char assignment)
 {
 	if (validAssignment(rowNum, colNum, assignment)){
@@ -143,11 +212,29 @@ bool SudokuBoard::makeAssignment(int rowNum, int colNum, char assignment)
 	
 }
 
+/**
+ * Clears an assigned value by setting it to zero.
+ *
+ * @param[in] int rowNum        The row number to clear
+ * @param[in] int colNum        The column number to clear
+ *
+ * @returns Void
+ **/
 void SudokuBoard::clearAssignment(int rowNum, int colNum)
 {
     board[rowNum][colNum] = '0';
 }
 
+
+/**
+ * Gets all unassigned entires in a box.
+ *
+ * @param[in] int rowNum        The row number to check in
+ * @param[in] int colNum        The column number to check in
+ * @param[in] KeySet &boxKeys   Reference to set to fill
+ *
+ * @returns Void
+ **/
 void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys)
 {
     int lowX, highX, lowY, highY;
@@ -170,6 +257,14 @@ void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys)
     }
 }
 
+/**
+ * Gets all unassigned entires in a row.
+ *
+ * @param[in] int rowNum        The row number to check in
+ * @param[in] KeySet &rowKeys   Reference to set to fill
+ *
+ * @returns Void
+ **/
 void SudokuBoard::getRowMembers(int rowNum, KeySet &rowKeys)
 {
 	for(int i = 0; i < this->N; i++)
@@ -182,7 +277,14 @@ void SudokuBoard::getRowMembers(int rowNum, KeySet &rowKeys)
 	}
 
 }
-
+/**
+ * Gets all unassigned entires in a column.
+ *
+ * @param[in] int colNum        The column number to check in
+ * @param[in] KeySet &colKeys   Reference to set to fill
+ *
+ * @returns Void
+ **/
 void SudokuBoard::getColMembers(int colNum, KeySet &colKeys)
 {
 	for(int i = 0; i < this->N; i++)
