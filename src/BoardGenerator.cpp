@@ -20,7 +20,7 @@ SudokuBoard BoardGenerator::generateBoard(int N, int p, int q, int numAssignment
 	int assigned = 0;
 	while (assigned < numAssignments) 
 	{
-		int i = rand() % N + 0, j = rand() % N + 0, k = rand() % (N-1) + 1;
+		int i = rand() % N, j = rand() % N, k = rand() % N;
 		char val = sb.getDomain()[k];
 		if ( sb.getValue(i, j) != '0' ) continue;
 		if ( sb.makeAssignment(i, j, val) ) assigned++;

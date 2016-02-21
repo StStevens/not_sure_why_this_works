@@ -23,10 +23,10 @@ SudokuBoard::SudokuBoard(int p, int q, int N, Board newBoard)
 	}
 	else
 	{
-    		setP(p);
-    		setQ(q);
-    		setN(N);
-	    	setBoard(newBoard);
+    	setP(p);
+    	setQ(q);
+    	setN(N);
+	   	setBoard(newBoard);
 		validEntries = AllowedValues.substr(0, N);
 	}
 }
