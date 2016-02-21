@@ -12,8 +12,11 @@ backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool F
     hasSolution = false;
     deadEnds = 0;
     nodeCount = 0;
+    
+    // Init Config Variables
     forwardCheckingEnabled = FC;
     minRemVar = MRV;
+    degHeur = DH;
 }
 
 void backtrackingSolver::generateConstraintGraph()
@@ -52,22 +55,66 @@ std::string backtrackingSolver::generateOfp()
     return output.str();
 }
 
+Key backtrackingSolver::findHighestDegree(std::list<Key> &toCheck)
+{
+    KeySet keysConstrained;
+    Key toReturn;
+    int maxConstraints = 0;
+    for (std::list<Key>::iterator iter = toCheck.begin(); iter != toCheck.end(); iter++)
+    {
+        getRelatedEntries(iter->first, iter->second, keysConstrained);
+        if (keysConstrained.size() > maxConstraints)
+        {
+            maxConstraints = keysConstrained.size();
+            toReturn = *iter;
+        }
+    }
+    
+    return toReturn;
+}
+
+std::list<Key>::iterator backtrackingSolver::find_in_list(Key find, std::list<Key> toAssign)
+{
+    for (std::list<Key>::iterator iter = toAssign.begin(); iter != toAssign.end(); iter++)
+    {
+        if (*iter == find) return iter;
+    }
+    return toAssign.begin();
+}
+
 Key backtrackingSolver::selectUnassignedVariable()
 {
     Key toReturn;
+    std::list<Key>::iterator toErase;
     if (this->minRemVar)
     {
-        std::list<Key>::iterator toErase;
+        std::list<Key> toCheck;
         int min = 36;
         for (std::list<Key>::iterator it = toAssign.begin(); it != toAssign.end(); it++)
         {
             if (this->constraintGraph[*it].size() < min)
             {
                 min = this->constraintGraph[*it].size();
+                toCheck.clear();
                 toReturn = *it;
                 toErase = it;
             }
+            else if (this->constraintGraph[*it].size() == min)
+            {
+                toCheck.push_back(*it);
+            }
         }
+        if (toCheck.size() > 1 && this->degHeur)
+        {
+            toReturn = findHighestDegree(toCheck);
+            toErase = find_in_list(toReturn, toAssign);
+        }
+        toAssign.erase(toErase);
+    }
+    else if (this->degHeur)
+    {
+        toReturn = findHighestDegree(toAssign);
+        toErase = find_in_list(toReturn, toAssign);
         toAssign.erase(toErase);
     }
     else
@@ -172,10 +219,8 @@ void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::l
 void backtrackingSolver::solve()
 {
     time(&startTime);
-
     time(&prepStartTime);
     time(&endPrepTime);
-
     time(&searchStartTime);
         
     try
