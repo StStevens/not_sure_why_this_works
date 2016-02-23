@@ -17,6 +17,7 @@ backtrackingSolver::backtrackingSolver(SudokuBoard* toSolve, int maxTime, bool F
     forwardCheckingEnabled = FC;
     minRemVar = MRV;
     degHeur = DH;
+    this->LCV = LCV;
 }
 
 void backtrackingSolver::generateConstraintGraph()
@@ -125,6 +126,28 @@ Key backtrackingSolver::selectUnassignedVariable()
     return toReturn;
 }
 
+char backtrackingSolver::selectUnassignedValue(int row, int column, KeySet &relatedEntries)
+{
+    char toUse;
+    int score = 105;
+    if(LCV)
+    {
+        for(Domain::iterator check = constraintGraph[Key(row, column)].begin(); check != constraintGraph[Key(row, column)].end(); check++)
+        {
+            int tempScore = getLCVScore(row, column, *check, relatedEntries);
+            if(tempScore < score)
+            {
+                score = tempScore;
+                toUse = *check;
+            }
+        }
+    }
+    else{
+        return *(constraintGraph[Key(row, column)].begin());
+    }
+    return toUse;
+}
+
 bool backtrackingSolver::backTrackingSearch(int level)
 {
     time(&endTime);
@@ -137,15 +160,24 @@ bool backtrackingSolver::backTrackingSearch(int level)
 
     Key newVar = selectUnassignedVariable();
     nodeCount++;
-
-    for (Domain::iterator toUse = constraintGraph[newVar].begin(); toUse != constraintGraph[newVar].end(); toUse++)
+    
+    KeySet potentialChanges;
+    getRelatedEntries(newVar.first, newVar.second, potentialChanges);
+    
+    Domain triedValues;
+    
+    while(!constraintGraph[newVar].empty())
     {
+        char toUse = selectUnassignedValue(newVar.first, newVar.second, potentialChanges);
+        triedValues.insert(toUse);
+        constraintGraph[newVar].erase(toUse);
+
         try
         {
-            if ( board->makeAssignment(newVar.first, newVar.second, *toUse) )
+            if ( board->makeAssignment(newVar.first, newVar.second, toUse) )
             {
                 if(forwardCheckingEnabled)
-                    forwardCheck(newVar.first, newVar.second, *toUse, fcPruned);
+                    forwardCheck(newVar.first, newVar.second, toUse, fcPruned, potentialChanges);
 
                 if (backTrackingSearch(level+1)) return true;
                     board->clearAssignment(newVar.first, newVar.second);
@@ -164,7 +196,8 @@ bool backtrackingSolver::backTrackingSearch(int level)
             board->clearAssignment(newVar.first, newVar.second);
         }
     }
-
+    
+    constraintGraph[newVar] = triedValues;
     toAssign.push_front(newVar);
     deadEnds++;
     return false;
@@ -203,10 +236,21 @@ void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
     }
 }
 
-void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList)
+int backtrackingSolver::getLCVScore(int row, int column, char assigned, KeySet &relatedEntries)
 {
-    KeySet potentialChanges;
-    getRelatedEntries(row, column, potentialChanges);
+    int score = 0;
+    for(KeySet::iterator toCheck = relatedEntries.begin(); toCheck != relatedEntries.end(); toCheck++)
+    {
+        if(constraintGraph[(*toCheck)].find(assigned) != constraintGraph[(*toCheck)].end())
+            score++;
+    }
+    return score;
+}
+
+void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList, KeySet &potentialChanges)
+{
+ //   KeySet potentialChanges;
+ // getRelatedEntries(row, column, potentialChanges);
     for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
     {
         Domain::iterator domainEntry = constraintGraph[*toCheck].find(assigned);

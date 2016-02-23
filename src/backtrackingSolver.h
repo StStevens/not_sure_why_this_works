@@ -40,9 +40,13 @@ class backtrackingSolver
 		bool forwardCheckingEnabled;
         bool minRemVar;
         bool degHeur;
+        bool LCV;
 
         //Forward Checking
-		void forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList);
+		void forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList, KeySet &potentialChanges);
+
+        //LCV
+        int getLCVScore(int row, int column, char assigned, KeySet &relatedEntries);
 
         // Degree Heuristic
         Key findHighestDegree(std::list<Key> &toCheck);
@@ -50,6 +54,7 @@ class backtrackingSolver
 		void generateConstraintGraph();
         std::list<Key>::iterator find_in_list(Key find, std::list<Key> toAssign);
 		Key selectUnassignedVariable();
+        char selectUnassignedValue(int row, int column, KeySet &relatedEntries);
 		bool backTrackingSearch(int level);
 		CheckChange removeFromDomain(Key entry, char toRemove);
 		void replaceInDomain(std::list<CheckChange> toRestore);
