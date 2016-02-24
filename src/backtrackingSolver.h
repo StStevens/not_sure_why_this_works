@@ -52,7 +52,7 @@ class backtrackingSolver
         Key findHighestDegree(std::list<Key> &toCheck);
 
 		void generateConstraintGraph();
-        std::list<Key>::iterator find_in_list(Key find, std::list<Key> toAssign);
+        std::list<Key>::iterator find_in_list(Key find, std::list<Key> &toAssign);
 		Key selectUnassignedVariable();
         char selectUnassignedValue(int row, int column, KeySet &relatedEntries);
 		bool backTrackingSearch(int level);

@@ -74,7 +74,7 @@ Key backtrackingSolver::findHighestDegree(std::list<Key> &toCheck)
     return toReturn;
 }
 
-std::list<Key>::iterator backtrackingSolver::find_in_list(Key find, std::list<Key> toAssign)
+std::list<Key>::iterator backtrackingSolver::find_in_list(Key find, std::list<Key> &toAssign)
 {
     for (std::list<Key>::iterator iter = toAssign.begin(); iter != toAssign.end(); iter++)
     {
