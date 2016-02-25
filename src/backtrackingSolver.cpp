@@ -135,7 +135,7 @@ char backtrackingSolver::selectUnassignedValue(int row, int column, KeySet &rela
         for(Domain::iterator check = constraintGraph[Key(row, column)].begin(); check != constraintGraph[Key(row, column)].end(); check++)
         {
             int tempScore = getLCVScore(row, column, *check, relatedEntries);
-            if(tempScore < score)
+            if((tempScore < score) || (tempScore == score && *check < toUse))
             {
                 score = tempScore;
                 toUse = *check;
@@ -232,7 +232,6 @@ void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
         Key toFix = entry->first;
         char toAdd = entry->second;
         constraintGraph[toFix].insert(toAdd);
-    //  constraintGraph[entry->first].insert(entry->second);
     }
 }
 
@@ -249,8 +248,6 @@ int backtrackingSolver::getLCVScore(int row, int column, char assigned, KeySet &
 
 void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList, KeySet &potentialChanges)
 {
- //   KeySet potentialChanges;
- // getRelatedEntries(row, column, potentialChanges);
     for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
     {
         Domain::iterator domainEntry = constraintGraph[*toCheck].find(assigned);
