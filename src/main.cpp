@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-    bool FC = false, ACP = false, MAC = false, MRV = false, DH = false, LCV = false;    
+    bool FC = false, ACP = false, MAC = false, MRV = false, DH = false, LCV = false, PTY = false;    
     for (int i = 4; i < argc; i++)
     {
         if (strcmp(argv[i], "FC") == 0) FC = true;
@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
         if (strcmp(argv[i], "MRV") == 0) MRV = true;
         if (strcmp(argv[i], "DH") == 0) DH = true;
         if (strcmp(argv[i], "LCV") == 0) LCV = true;
+        if (strcmp(argv[i], "PTY") == 0) PTY = true;
     }
 
     std::cout << FC << std::endl << MRV <<std::endl;

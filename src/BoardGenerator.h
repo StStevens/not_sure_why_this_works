@@ -11,10 +11,10 @@
 class BoardGenerator
 {
 	time_t startTime;
-	time_t currTime;
+	time_t endTime;
 
 	public:
-	BoardGenerator() {}
+	BoardGenerator() {}         // Constructor
 	SudokuBoard generateBoard(int N, int p, int q, int numAssingments, int timeout = 30);
     std::string boardString(SudokuBoard sb);
 };

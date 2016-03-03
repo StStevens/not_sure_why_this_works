@@ -235,7 +235,7 @@ void SudokuBoard::clearAssignment(int rowNum, int colNum)
  *
  * @returns Void
  **/
-void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys)
+void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys, bool getAssigned)
 {
     int lowX, highX, lowY, highY;
 
@@ -248,7 +248,7 @@ void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys)
     {
         for (int j = lowY; j < highY; j++)
         {
-            if (board[i][j] == '0')
+            if (getAssigned || board[i][j] == '0')
             {
                 std::pair<int, int> key(i, j);
                 boxKeys.insert(key);
@@ -265,11 +265,11 @@ void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys)
  *
  * @returns Void
  **/
-void SudokuBoard::getRowMembers(int rowNum, KeySet &rowKeys)
+void SudokuBoard::getRowMembers(int rowNum, KeySet &rowKeys, bool getAssigned)
 {
 	for(int i = 0; i < this->N; i++)
 	{
-        if (board[rowNum][i] == '0')
+        if (getAssigned || board[rowNum][i] == '0')
         {
             std::pair<int, int> key(rowNum, i);
             rowKeys.insert(key);
@@ -285,11 +285,11 @@ void SudokuBoard::getRowMembers(int rowNum, KeySet &rowKeys)
  *
  * @returns Void
  **/
-void SudokuBoard::getColMembers(int colNum, KeySet &colKeys)
+void SudokuBoard::getColMembers(int colNum, KeySet &colKeys, bool getAssigned)
 {
 	for(int i = 0; i < this->N; i++)
 	{
-        if (board[i][colNum] == '0')
+        if (getAssigned || board[i][colNum] == '0')
         {
             std::pair<int, int> key(i, colNum);
             colKeys.insert(key);

@@ -1,6 +1,16 @@
 #include "BoardGenerator.h"
 
-
+/**
+ * Creates a board with numAssignments amount of contraints.
+ *
+ * int N                        size of the board
+ * int p                        the number of rows per box
+ * int q                        the number of columns per box
+ * int numAssignments           number of assignments to make
+ * int timeout                  amount of time given to create board
+ *
+ * returns SudokuBoard
+ **/
 SudokuBoard BoardGenerator::generateBoard(int N, int p, int q, int numAssignments, int timeout)
 {
 	Board tempBoard(N, std::vector<char>(N, '0'));
@@ -26,8 +36,8 @@ SudokuBoard BoardGenerator::generateBoard(int N, int p, int q, int numAssignment
 		if ( sb.makeAssignment(i, j, val) ) assigned++;
 		else
 		{
-			time(&currTime);
-			if (currTime - startTime > timeout)
+			time(&endTime);
+			if (endTime - startTime > timeout)
 			{
 				std::cout << "Timeout at " << assigned << " elements.\n";
 				return sb;
@@ -37,6 +47,14 @@ SudokuBoard BoardGenerator::generateBoard(int N, int p, int q, int numAssignment
     return sb;
 }
 
+/**
+ * Creates a stringstream that makes a board string readable by the 
+ * sudokuboardReader
+ *
+ * SudokuBoard sb               the SudokuBoard to convert
+ *
+ * returns std::string
+ **/
 std::string BoardGenerator::boardString(SudokuBoard sb)
 {
     std::stringstream output;

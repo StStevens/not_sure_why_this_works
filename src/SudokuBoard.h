@@ -58,9 +58,9 @@ class SudokuBoard
 	void clearAssignment(int rowNum, int colNum);
 
     //Getters for related entries
-	void getBoxMembers(int rowNum, int colNum, KeySet &boxKeys);
-	void getRowMembers(int rowNum, KeySet &rowKeys);
-	void getColMembers(int colNum, KeySet &colKeys);
+	void getBoxMembers(int rowNum, int colNum, KeySet &boxKeys, bool getAssigned = false);
+	void getRowMembers(int rowNum, KeySet &rowKeys, bool getAssigned = false);
+	void getColMembers(int colNum, KeySet &colKeys, bool getAssigned = false);
 	
 };
 

@@ -35,21 +35,25 @@ class backtrackingSolver
        	int deadEnds;
 	    int nodeCount;
 	    std::string endResult;
+        int assgntsMade;
 
-		//Config
+		// Config
 		bool forwardCheckingEnabled;
         bool minRemVar;
         bool degHeur;
         bool LCV;
+        bool pretty;
+        bool ACP;
 
-        //Forward Checking
+        // Forward Checking
 		void forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList, KeySet &potentialChanges);
 
-        //LCV
+        // LCV
         int getLCVScore(int row, int column, char assigned, KeySet &relatedEntries);
 
         // Degree Heuristic
         Key findHighestDegree(std::list<Key> &toCheck);
+
 
 		void generateConstraintGraph();
         std::list<Key>::iterator find_in_list(Key find, std::list<Key> &toAssign);
