@@ -212,11 +212,11 @@ CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
        }
 }
 
-void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs)
+void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs, bool getAssigned = false)
 {
-    board->getBoxMembers(row, column, relatedPairs);
-    board->getRowMembers(row, relatedPairs);
-    board->getColMembers(column, relatedPairs);
+    board->getBoxMembers(row, column, relatedPairs, getAssigned);
+    board->getRowMembers(row, relatedPairs, getAssigned);
+    board->getColMembers(column, relatedPairs, getAssigned);
 
     KeySet::iterator removeSelf = relatedPairs.find(Key(row, column));
     if(removeSelf != relatedPairs.end()) //If we forward check away the key it won't assign.
