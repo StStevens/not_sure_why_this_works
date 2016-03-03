@@ -212,7 +212,7 @@ CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
        }
 }
 
-void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs, bool getAssigned = false)
+void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs, bool getAssigned)
 {
     board->getBoxMembers(row, column, relatedPairs, getAssigned);
     board->getRowMembers(row, relatedPairs, getAssigned);
