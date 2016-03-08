@@ -14,7 +14,7 @@
 
 
 typedef std::pair<int, int> Key;
-typedef std::unordered_set<char> Domain;
+typedef std::set<char> Domain;
 typedef std::map<Key, Domain> ConstraintGraph;
 typedef std::pair< Key, char > CheckChange;
 

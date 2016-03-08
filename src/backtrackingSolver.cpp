@@ -69,6 +69,7 @@ Key backtrackingSolver::findHighestDegree(std::list<Key> &toCheck)
             maxConstraints = keysConstrained.size();
             toReturn = *iter;
         }
+        keysConstrained.clear();
     }
     
     return toReturn;
@@ -158,6 +159,8 @@ bool backtrackingSolver::backTrackingSearch(int level)
 
     std::list<CheckChange> fcPruned;
 
+    int input;
+
     Key newVar = selectUnassignedVariable();
     nodeCount++;
     
@@ -170,17 +173,17 @@ bool backtrackingSolver::backTrackingSearch(int level)
     {
         char toUse = selectUnassignedValue(newVar.first, newVar.second, potentialChanges);
         triedValues.insert(toUse);
-        constraintGraph[newVar].erase(toUse);
 
         try
         {
             if ( board->makeAssignment(newVar.first, newVar.second, toUse) )
             {
+                //std::cout  << newVar.first << ", " << newVar.second << ": " << toUse << std::endl <<board->displayBoard();
                 if(forwardCheckingEnabled)
                     forwardCheck(newVar.first, newVar.second, toUse, fcPruned, potentialChanges);
 
                 if (backTrackingSearch(level+1)) return true;
-                    board->clearAssignment(newVar.first, newVar.second);
+                board->clearAssignment(newVar.first, newVar.second);
 
                 if(forwardCheckingEnabled)
                 {
@@ -188,6 +191,7 @@ bool backtrackingSolver::backTrackingSearch(int level)
                     fcPruned.clear();
                 }
             }
+            constraintGraph[newVar].erase(toUse);
         }
         catch (NoRemainingVals e)
         {
@@ -206,8 +210,9 @@ bool backtrackingSolver::backTrackingSearch(int level)
 CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
     Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
         if(!(domainEntry == constraintGraph[entry].end())){
-                if (constraintGraph[entry].empty()) throw (NoRemainingVals());
+                std::cout << entry.first << ", " << entry.second << ": " << toRemove << std::endl;
                 constraintGraph[entry].erase(domainEntry);
+                if (constraintGraph[entry].empty()) throw (NoRemainingVals());
                 return CheckChange(entry, toRemove);
        }
 }
