@@ -9,8 +9,11 @@
 #include <list>
 #include <string>
 #include <iterator>
+#include <algorithm>
+#include <queue>
 #include <ctime>
 #include "SudokuBoard.h"
+#include "mapheap.h"
 
 
 typedef std::pair<int, int> Key;
@@ -53,13 +56,12 @@ class backtrackingSolver
         // LCV
         int getLCVScore(int row, int column, char assigned, KeySet &relatedEntries);
 
-        // Degree Heuristic
-        Key findHighestDegree(std::list<Key> &toCheck);
-
+        // Degree Heursitic
+        map_heap degreeMap;
+      
 
 		void generateConstraintGraph();
-        void buildRelatedEntries(int row, int column, bool getAssigned = false);
-        std::list<Key>::iterator find_in_list(Key find, std::list<Key> &toAssign);
+        void buildRelatedEntries(int row, int column, KeySet &constrainedKeys, bool getAssigned = false);
 		Key selectUnassignedVariable();
         char selectUnassignedValue(int row, int column, KeySet &relatedEntries);
 		bool backTrackingSearch(int level);

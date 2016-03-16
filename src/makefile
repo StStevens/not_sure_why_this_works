@@ -1,6 +1,6 @@
 CC = g++ -std=c++0x
 CFLAGS = -c 
-SOURCES = main.cpp SudokuBoard.cpp BoardGenerator.cpp sudokuBoardReader.cpp backtrackingSolver.cpp
+SOURCES = main.cpp SudokuBoard.cpp BoardGenerator.cpp sudokuBoardReader.cpp backtrackingSolver.cpp mapheap.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = ../bin/main
 

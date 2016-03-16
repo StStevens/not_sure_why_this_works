@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "backtrackingSolver.h"
 
 
@@ -28,8 +29,9 @@ void backtrackingSolver::generateConstraintGraph()
         {
             if (board->getValue(i, j) == '0')
             {
-                toAssign.push_back(Key(i,j)); // Should move this later
-                buildRelatedEntries(i, j);
+                Key newKey = Key(i, j);
+                toAssign.push_back(newKey); // Should move this later
+                buildRelatedEntries(i, j, relatedEntries[newKey]);
                 std::string domain = board->getDomain();
                 for(std::string::iterator toUse = domain.begin(); toUse != domain.end(); ++toUse)
                 {
@@ -57,38 +59,9 @@ std::string backtrackingSolver::generateOfp()
     return output.str();
 }
 
-Key backtrackingSolver::findHighestDegree(std::list<Key> &toCheck)
-{
-    KeySet keysConstrained;
-    Key toReturn;
-    int maxConstraints = 0;
-    for (std::list<Key>::iterator iter = toCheck.begin(); iter != toCheck.end(); iter++)
-    {
-        getRelatedEntries(iter->first, iter->second, keysConstrained);
-        if (keysConstrained.size() > maxConstraints)
-        {
-            maxConstraints = keysConstrained.size();
-            toReturn = *iter;
-        }
-        keysConstrained.clear();
-    }
-    
-    return toReturn;
-}
-
-std::list<Key>::iterator backtrackingSolver::find_in_list(Key find, std::list<Key> &toAssign)
-{
-    for (std::list<Key>::iterator iter = toAssign.begin(); iter != toAssign.end(); iter++)
-    {
-        if (*iter == find) return iter;
-    }
-    return toAssign.begin();
-}
-
 Key backtrackingSolver::selectUnassignedVariable()
 {
     Key toReturn;
-    std::list<Key>::iterator toErase;
     if (this->minRemVar)
     {
         std::list<Key> toCheck;
@@ -100,25 +73,23 @@ Key backtrackingSolver::selectUnassignedVariable()
                 min = this->constraintGraph[*it].size();
                 toCheck.clear();
                 toReturn = *it;
-                toErase = it;
             }
-            else if (this->constraintGraph[*it].size() == min)
-            {
+            else if (this->degHeur && this->constraintGraph[*it].size() == min)
                 toCheck.push_back(*it);
-            }
         }
-        if (toCheck.size() > 1 && this->degHeur)
+        if (this->degHeur && toCheck.size() > 1)
         {
-            toReturn = findHighestDegree(toCheck);
-            toErase = find_in_list(toReturn, toAssign);
+            degreeMap.fill_valMap(toCheck);
+            toReturn = degreeMap.mapheap_top();
+            toAssign.remove(toReturn);
         }
-        toAssign.erase(toErase);
+        toAssign.remove(toReturn);
     }
     else if (this->degHeur)
     {
-        toReturn = findHighestDegree(toAssign);
-        toErase = find_in_list(toReturn, toAssign);
-        toAssign.erase(toErase);
+        degreeMap.fill_valMap(toAssign);
+        toReturn = degreeMap.mapheap_top();
+        toAssign.remove(toReturn);
     }
     else
     {
@@ -159,11 +130,13 @@ bool backtrackingSolver::backTrackingSearch(int level)
         return true;
 
     std::list<CheckChange> fcPruned;
+    int input;
 
     Key newVar = selectUnassignedVariable();
     nodeCount++;
     
     KeySet potentialChanges;
+    KeySet constrained;
     getRelatedEntries(newVar.first, newVar.second, potentialChanges);
     
     Domain triedValues;
@@ -176,9 +149,14 @@ bool backtrackingSolver::backTrackingSearch(int level)
         {
             if ( board->makeAssignment(newVar.first, newVar.second, toUse) )
             {
-
                 if(forwardCheckingEnabled)
                     forwardCheck(newVar.first, newVar.second, toUse, fcPruned, potentialChanges);
+
+                if (degHeur)
+                {
+                    buildRelatedEntries(newVar.first, newVar.second, constrained);
+                    degreeMap.update_heap(constrained, false);
+                }
 
                 if (backTrackingSearch(level+1)) return true;
                 board->clearAssignment(newVar.first, newVar.second);
@@ -200,6 +178,7 @@ bool backtrackingSolver::backTrackingSearch(int level)
         }
     }
     
+    if (degHeur) degreeMap.update_heap(constrained, true);
     constraintGraph[newVar] = triedValues;
     toAssign.push_front(newVar);
     deadEnds++;
@@ -213,16 +192,16 @@ void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedP
 }
 
 
-void backtrackingSolver::buildRelatedEntries(int row, int column, bool getAssigned)
+void backtrackingSolver::buildRelatedEntries(int row, int column, KeySet &constrainedKeys, bool getAssigned)
 {
-    board->getBoxMembers(row, column, relatedEntries[Key(row, column)], getAssigned);
-    board->getRowMembers(row, relatedEntries[Key(row, column)], getAssigned);
-    board->getColMembers(column, relatedEntries[Key(row, column)], getAssigned);
+    board->getBoxMembers(row, column, constrainedKeys, getAssigned);
+    board->getRowMembers(row, constrainedKeys, getAssigned);
+    board->getColMembers(column, constrainedKeys, getAssigned);
 
-    KeySet::iterator removeSelf = relatedEntries[Key(row, column)].find(Key(row, column));
-    if(removeSelf != relatedEntries[Key(row, column)].end()) //If we forward check away the key it won't assign.
+    KeySet::iterator removeSelf = constrainedKeys.find(Key(row, column));
+    if(removeSelf != constrainedKeys.end()) //If we forward check away the key it won't assign.
     {
-        relatedEntries[Key(row, column)].erase(removeSelf);
+        constrainedKeys.erase(removeSelf);
     }
 }
 
@@ -253,7 +232,8 @@ CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
                 if (constraintGraph[entry].size() == 1){
                    throw (NoRemainingVals());
                 }
-                constraintGraph[entry].erase(domainEntry);
+                
+constraintGraph[entry].erase(domainEntry);
                 return CheckChange(entry, toRemove);
        }
 }
@@ -273,6 +253,12 @@ void backtrackingSolver::solve()
 {
     time(&startTime);
     time(&prepStartTime);
+    
+    if (degHeur)
+    {
+        degreeMap.fill_map_heap(relatedEntries);
+    }
+
     time(&endPrepTime);
     time(&searchStartTime);
         
