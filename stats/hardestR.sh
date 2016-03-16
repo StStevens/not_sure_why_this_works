@@ -16,13 +16,13 @@ for counter in `seq 0 13`; do
         totalTime=$(($totalTime+$TIME))
         NODES=`grep COUNT_NODES "rTest.out" | awk '{split($0, a, "="); print a[2]}'`
         totalNodes=$(($totalNodes + $NODES))
-        SOLUTION=`grep \SOLUTION= "rTest.out" | tr -d -c '0' | awk '{ print length; }'`
+        SOLUTION=`grep \STATUS= "rTest.out" | tr -d -c '0' | awk '{ print length; }'`
         if [ $TIME -eq 300 ]
         then
-            out.txt > IwasTooHard$outOfTime.txt
+            cat out.txt > IwasTooHard$outOfTime.txt
             outOfTime=$(($outOfTime+1))
         fi
-        if [ -z $SOLUTION ]
+        if [ $SOLUTION == "success" ]
         then
             totalSolve=$(($totalSolve + 1))
         fi
