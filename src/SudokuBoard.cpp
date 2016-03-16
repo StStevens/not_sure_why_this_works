@@ -239,10 +239,10 @@ void SudokuBoard::getBoxMembers(int rowNum, int colNum, KeySet &boxKeys, bool ge
 {
     int lowX, highX, lowY, highY;
 
-    lowX = rowNum - (rowNum % q);
-    highX = rowNum + (q - (rowNum % q));
-    lowY = colNum - (colNum % p);
-    highY = colNum + (p - (colNum % p));
+    lowX = rowNum - (rowNum % p);
+    highX = rowNum + (p - (rowNum % p));
+    lowY = colNum - (colNum % q);
+    highY = colNum + (q - (colNum % q));
 
     for (int i = lowX; i < highX; i++)
     {
