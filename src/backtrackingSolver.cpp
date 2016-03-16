@@ -163,7 +163,6 @@ bool backtrackingSolver::backTrackingSearch(int level)
     int input;
 
     Key newVar = selectUnassignedVariable();
-    std::cout << "NV: " << newVar.first << ", " << newVar.second << std::endl;
     nodeCount++;
     
     KeySet potentialChanges;
@@ -180,8 +179,6 @@ bool backtrackingSolver::backTrackingSearch(int level)
             if ( board->makeAssignment(newVar.first, newVar.second, toUse) )
             {
 
-                std::cout << board->displayBoard();
-                std::cin >> input;
                 if(forwardCheckingEnabled)
                     forwardCheck(newVar.first, newVar.second, toUse, fcPruned, potentialChanges);
 
