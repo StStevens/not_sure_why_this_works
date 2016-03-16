@@ -27,7 +27,8 @@ for counter in `seq 0 13`; do
     avgTime=$(($totalTime / 10))
     var=0
     for entry in `seq 1 10`; do
-        midWay=$(( (${puzzleTime[$entry]} - $avgTime) ** 2 ))
+        echo ${puzzleTimes[$entry]}
+        midWay=$(( (${puzzleTimes[$entry]} - $avgTime) ** 2 ))
         var=$(($var + $midWay))
     done
     var=$(($var / 10))
