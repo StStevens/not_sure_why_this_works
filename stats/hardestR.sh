@@ -2,6 +2,7 @@
 mToTry=(4 8 12 16 17 18 19 20 21 22 24 28 32 36)
 timeout=300
 
+outOfTime=0
 > hardestRResults
 for counter in `seq 0 13`; do
     puzzleTimes=()
@@ -16,6 +17,11 @@ for counter in `seq 0 13`; do
         NODES=`grep COUNT_NODES "rTest.out" | awk '{split($0, a, "="); print a[2]}'`
         totalNodes=$(($totalNodes + $NODES))
         SOLUTION=`grep \SOLUTION= "rTest.out" | tr -d -c '0' | awk '{ print length; }'`
+        if [ $TIME -eq 300 ]
+        then
+            out.txt > IwasTooHard$outOfTime.txt
+            outOfTime=$(($outOfTime+1))
+        fi
         if [ -z $SOLUTION ]
         then
             totalSolve=$(($totalSolve + 1))
