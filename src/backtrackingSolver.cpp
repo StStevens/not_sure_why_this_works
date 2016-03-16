@@ -160,8 +160,6 @@ bool backtrackingSolver::backTrackingSearch(int level)
 
     std::list<CheckChange> fcPruned;
 
-    int input;
-
     Key newVar = selectUnassignedVariable();
     nodeCount++;
     

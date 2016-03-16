@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include <fstream>
 #include <cstdlib>
 #include <cstring>
@@ -8,9 +9,47 @@
 #include "backtrackingSolver.h"
 
 
+
+std::vector<int> get_params(std::string input)
+{
+    std::vector<int> params;
+    std::ifstream ifp;
+    std::string token;
+
+    ifp.open(input);
+    if (!(ifp.is_open()))
+    {
+        std::cout << "Unable to open file.\n";
+        exit(-1);
+    }
+    
+    while (ifp >> token)
+        params.push_back(std::stoi(token));
+    ifp.close();
+
+    return params;
+}
+
+void generate_board_file(std::vector<int> &params)
+{
+    BoardGenerator bg;
+    SudokuBoard sb = bg.generateBoard(params[0], params[1], params[2], params[3]);
+
+    std::ofstream ofp;
+    ofp.open("randBoard.txt");
+    if (!(ofp.is_open()))
+    {
+        std::cout << "Unable to open file.\n";
+        exit(-1);
+    }
+
+    ofp << bg.boardString(sb);
+    ofp.close();
+}
+
 int main(int argc, char *argv[])
 {
-    bool FC = false, ACP = false, MAC = false, MRV = false, DH = false, LCV = false, PTY = false;    
+    bool FC = false, ACP = false, MAC = false, MRV = false, DH = false, LCV = false, GEN = false;    
     for (int i = 4; i < argc; i++)
     {
         if (strcmp(argv[i], "FC") == 0) FC = true;
@@ -19,10 +58,8 @@ int main(int argc, char *argv[])
         if (strcmp(argv[i], "MRV") == 0) MRV = true;
         if (strcmp(argv[i], "DH") == 0) DH = true;
         if (strcmp(argv[i], "LCV") == 0) LCV = true;
-        if (strcmp(argv[i], "PTY") == 0) PTY = true;
+        if (strcmp(argv[i], "GEN") == 0) GEN = true;
     }
-
-    std::cout << FC << std::endl << MRV <<std::endl;
 
     if (argc < 4)
     {
@@ -32,7 +69,16 @@ int main(int argc, char *argv[])
 
     try
     {
-        sudokuBoardReader sudRead(argv[1]);
+        std::string inpFile;
+        if (GEN)
+        {
+            std::vector<int> params = get_params(argv[1]);
+            generate_board_file(params);
+            inpFile = "randBoard.txt";
+        }
+        else inpFile = argv[1];
+
+        sudokuBoardReader sudRead(inpFile);
         SudokuBoard newBoard = sudRead.getBoard();
         std::cout << newBoard.displayBoard() << '\n';
 
