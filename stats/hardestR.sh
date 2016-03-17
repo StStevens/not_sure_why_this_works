@@ -11,18 +11,18 @@ for counter in `seq 0 13`; do
     totalSolve=0
     for puzzleNumber in `seq 1 10`; do
         echo "9 3 3" ${mToTry[$counter]} > hardestR.gen
-        ./main hardestR.gen rTest.out $timeout GEN > out.txt
+        ./main hardestR.gen rTest.out $timeout GEN FC MRV LCV > out.txt
         TIME=`grep TIME "rTest.out" | awk '{split($0, a, "="); print a[2]}'`
         totalTime=$(($totalTime+$TIME))
         NODES=`grep COUNT_NODES "rTest.out" | awk '{split($0, a, "="); print a[2]}'`
         totalNodes=$(($totalNodes + $NODES))
-        SOLUTION=`grep \STATUS= "rTest.out" | awk '{split($0, a, "="); print a[2]}'`
+        SOLUTION=`grep \SOLUTION= "rTest.out" | tr -d -c '0' | awk '{ print length; }'`
         if [ $TIME -eq 300 ]
         then
-            cat out.txt > IwasTooHard$outOfTime.txt
+            out.txt > IwasTooHard$outOfTime.txt
             outOfTime=$(($outOfTime+1))
         fi
-        if [ $SOLUTION == "success" ]
+        if [ -z $SOLUTION ]
         then
             totalSolve=$(($totalSolve + 1))
         fi
