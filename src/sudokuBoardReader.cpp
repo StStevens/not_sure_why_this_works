@@ -30,13 +30,27 @@ sudokuBoardReader::sudokuBoardReader(std::string fileName){
 
 }
 
-
+/**
+ * Returns a SudokuBoard Object that
+ * represents the current board
+ */
 SudokuBoard sudokuBoardReader::getBoard(){
 	SudokuBoard returnBoard(this->p, this->q, this->n, this->board);
 	return returnBoard;
 }
 
-
+/**
+ * Parses the header of a board file.
+ *
+ * This function prases the given str as
+ * the header line for a board file.
+ * It then sets the parameters of the board object
+ * according to the parameters.
+ *
+ * @param[in]   str::headerStr  The string to parse as the header.
+ *
+ * @returns None
+ */
 void sudokuBoardReader::parseHeader(std::string headerStr){
     std::vector<std::string> options;
 	std::stringstream lineStream(headerStr);
@@ -51,6 +65,18 @@ void sudokuBoardReader::parseHeader(std::string headerStr){
         q = std::stoi(options[2]);
 }
 
+/**
+ * Fills the give from number with the string from
+ * the board file.
+ *
+ * This function fills the board object at the given
+ * rowNum with the contents of toParse
+ *
+ * @param[in]   int::rowNum     The row number to fill
+ * @param[in]   str::toParse    The string to parse for entries
+ *
+ * @returns None
+ */
 void sudokuBoardReader::fillRow(int rowNum, std::string toParse) {
     std::vector<char> entries;
     std::stringstream rowStream(toParse);
