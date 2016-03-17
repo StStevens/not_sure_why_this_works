@@ -259,6 +259,15 @@ bool backtrackingSolver::backTrackingSearch(int level)
     return false;
 }
 
+/**
+ * Fills related pairs with the related entries from our map.
+ *
+ * This exists for compatibility with book keeping changes.
+ *
+ * @param[in]   int::row                The row of the variable to get the related entries
+ * @param[in]   int::column             The column of the variable to get the related entries
+ * @param[in]   KeySet:: &relatedPairs  The KeySet entry to fill with related pairs
+ * @param[in]   bool::getAssigned       Deprecated
 void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs, bool getAssigned)
 {
     relatedPairs = relatedEntries[Key(row, column)];
