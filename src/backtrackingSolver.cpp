@@ -154,7 +154,7 @@ char backtrackingSolver::selectUnassignedValue(int row, int column, KeySet &rela
     {
         for(Domain::iterator check = constraintGraph[Key(row, column)].begin(); check != constraintGraph[Key(row, column)].end(); check++)
         {
-            int tempScore = getLCVScore(row, column, *check, relatedEntries);
+            int tempScore = getLCVScore(*check, relatedEntries);
             if((tempScore < score) || (tempScore == score && *check < toUse))
             {
                 score = tempScore;
@@ -215,7 +215,7 @@ bool backtrackingSolver::backTrackingSearch(int level)
             {
                 //Run forward checking if enabled
                 if(forwardCheckingEnabled)
-                    forwardCheck(newVar.first, newVar.second, toUse, fcPruned, potentialChanges);
+                    forwardCheck(toUse, fcPruned, potentialChanges);
                 
                 //Keep degree Heuristic up to date if enabled
                 if (degHeur)
@@ -268,13 +268,24 @@ bool backtrackingSolver::backTrackingSearch(int level)
  * @param[in]   int::column             The column of the variable to get the related entries
  * @param[in]   KeySet:: &relatedPairs  The KeySet entry to fill with related pairs
  * @param[in]   bool::getAssigned       Deprecated
+ */
 void backtrackingSolver::getRelatedEntries(int row, int column, KeySet &relatedPairs, bool getAssigned)
 {
     relatedPairs = relatedEntries[Key(row, column)];
     return;
 }
 
-
+/*
+ * Gets the keys in the same the row, column, and box that are still unassigned, or everything in the same
+ * row, column, and box if getAssigned is set to true, and removes itself from the set
+ *
+ * @param[in] int row:                  the current row number
+ * @param[in] int column:               the current column number
+ * @param[in] KeySet &constrainedKeys;  the keys in a constraint with the current variable
+ * @param[in] bool getAssigned:         whether or not assigned variables should be included (default false)
+ *
+ * return void
+ */
 void backtrackingSolver::buildRelatedEntries(int row, int column, KeySet &constrainedKeys, bool getAssigned)
 {
     board->getBoxMembers(row, column, constrainedKeys, getAssigned);
@@ -288,7 +299,15 @@ void backtrackingSolver::buildRelatedEntries(int row, int column, KeySet &constr
     }
 }
 
-void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
+/*
+ * Iterates through a list of Key, character pairs to see which keys have had values
+ * erased and adds them back into their respective domains
+ *
+ * @param[in] std::list<CheckChange> &toRestore:    list of key, character modify to restore
+ *
+ * return void
+ */
+void backtrackingSolver::replaceInDomain(std::list<CheckChange> &toRestore)
 {
     for(std::list<CheckChange>::iterator entry = toRestore.begin(); entry !=  toRestore.end(); entry++)
     {
@@ -298,7 +317,16 @@ void backtrackingSolver::replaceInDomain(std::list<CheckChange> toRestore)
     }
 }
 
-int backtrackingSolver::getLCVScore(int row, int column, char assigned, KeySet &relatedEntries)
+/*
+ * Iterates through the set of keys in a constraint with the current variable and
+ * sees how many domains it would affect
+ *
+ * @param[in] char assigned:            the value that was just assigned
+ * @param[in] KeySet &relatedEntries:   the set of keys in a constraint
+ *
+ * return int score:                    the number of domains affected
+ */
+int backtrackingSolver::getLCVScore(char assigned, KeySet &relatedEntries)
 {
     int score = 0;
     for(KeySet::iterator toCheck = relatedEntries.begin(); toCheck != relatedEntries.end(); toCheck++)
@@ -309,19 +337,37 @@ int backtrackingSolver::getLCVScore(int row, int column, char assigned, KeySet &
     return score;
 }
 
+/*
+ * Finds the iterator of the character to remove and removes it from the 
+ * domain
+ *
+ * @param[in] Key entry:        the Key whose domain to modify
+ * @param[in] char toRemove:    the character to remove from the domain
+ *
+ * return CheckChange           the Key, char pair that has been changed
+ */
 CheckChange backtrackingSolver::removeFromDomain(Key entry, char toRemove){
     Domain::iterator domainEntry = constraintGraph[entry].find(toRemove);
-        if(!(domainEntry == constraintGraph[entry].end())){
-                if (constraintGraph[entry].size() == 1){
-                   throw (NoRemainingVals());
-                }
-                
-constraintGraph[entry].erase(domainEntry);
-                return CheckChange(entry, toRemove);
-       }
+    if(!(domainEntry == constraintGraph[entry].end())){
+            if (constraintGraph[entry].size() == 1){
+               throw (NoRemainingVals());
+            }
+        constraintGraph[entry].erase(domainEntry);
+            return CheckChange(entry, toRemove);
+    }
 }
 
-void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::list<CheckChange> &changeList, KeySet &potentialChanges)
+/*
+ * Iterates through the Keys given in potentialChanges and sees if their domains
+ * constain the value that was just assigned. If so, calls removeFromDomain
+ *
+ * @param[in] char assigned:                        the value just assigned to the variable
+ * @param[in] std::list<CheckChange> &changeList:   list of keys with values that have been removed
+ * @param[in] KeySet &potentialChanges:             set of keys that are in a constraint
+ *
+ * return void
+ */
+void backtrackingSolver::forwardCheck(char assigned, std::list<CheckChange> &changeList, KeySet &potentialChanges)
 {
     for(KeySet::iterator toCheck = potentialChanges.begin(); toCheck != potentialChanges.end(); toCheck++)
     {
@@ -332,6 +378,14 @@ void backtrackingSolver::forwardCheck(int row, int column, char assigned, std::l
     }
 }
 
+/*
+ * Starts timers and calls the backtracking search function
+ * to solve the sudoku puzzle and catches timeout errors
+ *
+ * @param[in] void
+ *
+ * return void
+ */
 void backtrackingSolver::solve()
 {
     time(&startTime);

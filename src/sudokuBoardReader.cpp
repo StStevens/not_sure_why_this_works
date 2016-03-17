@@ -88,7 +88,6 @@ void sudokuBoardReader::fillRow(int rowNum, std::string toParse) {
     if (entries.size() != n)
     {
 	    std::cout << "Bad N. Expected: " << n << " and got " << entries.size() << " \n";
-//        throw (InvalidRowEntry("Number of row entires != N"));
     }
         this->board.push_back(entries);
 }

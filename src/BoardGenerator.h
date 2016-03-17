@@ -15,7 +15,8 @@ class BoardGenerator
 
 	public:
 	BoardGenerator() {}         // Constructor
-	SudokuBoard generateBoard(int N, int p, int q, int numAssingments, int timeout = 30);
+
+	SudokuBoard generateBoard(int N, int p, int q, int numAssingments, int timeout = 300);
     std::string boardString(SudokuBoard sb);
 };
 
