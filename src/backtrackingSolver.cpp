@@ -56,7 +56,8 @@ void backtrackingSolver::generateConstraintGraph()
                 std::string domain = board->getDomain();
                 for(std::string::iterator toUse = domain.begin(); toUse != domain.end(); ++toUse)
                 {
-                    constraintGraph[Key(i, j)].insert(*toUse);
+                    if (board->validAssignment(i, j, *toUse))
+                       constraintGraph[Key(i, j)].insert(*toUse);
                 }
             }
         }
